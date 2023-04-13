@@ -1,0 +1,48 @@
+{
+  "name": "@libreservice/wasm-code",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "homepage": "https://github.com/LibreService/wasm_code",
+  "author": {
+    "name": "Qijia Liu",
+    "email": "liumeo@pku.edu.cn",
+    "url": "https://github.com/eagleoflqj"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "eslint --ext .ts,.js,.vue src",
+    "lint:fix": "eslint --ext .ts,.js,.vue --fix src",
+    "check": "vue-tsc --noEmit",
+    "build": "vite build && vue-tsc -d --emitDeclarationOnly"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@babel/runtime": "^7.21.0",
+    "@codemirror/language": "^6.6.0",
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/view": "^6.9.4",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@uiw/codemirror-theme-vscode": "^4.19.16",
+    "@vicons/material": "^0.12.0",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "client-zip": "^2.3.1",
+    "codemirror": "^6.0.1",
+    "eslint": "^8.38.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-vue": "^9.10.0",
+    "naive-ui": "^2.34.3",
+    "typescript": "^5.0.4",
+    "vite": "^4.2.1",
+    "vue": "^3.2.47",
+    "vue-tsc": "^1.2.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.0",
+    "naive-ui": "^2.34.3"
+  }
+}
