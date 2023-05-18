@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, toRefs } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 import { NDialogProvider, NMessageProvider, NConfigProvider, useOsTheme, darkTheme } from 'naive-ui'
 import { StreamParser } from '@codemirror/language'
 import WasmCodeWrapper from './WasmCodeWrapper.vue'
@@ -24,6 +24,14 @@ const { theme } = toRefs(props)
 
 const osTheme = useOsTheme()
 const _theme = computed(() => theme.value || osTheme.value!)
+
+const wcw = ref<InstanceType<typeof WasmCodeWrapper>>()
+
+defineExpose({
+  expandFolder (path: string) {
+    return wcw.value!.expandFolder(path)
+  }
+})
 </script>
 
 <template>
@@ -33,6 +41,7 @@ const _theme = computed(() => theme.value || osTheme.value!)
     <n-dialog-provider>
       <n-message-provider>
         <wasm-code-wrapper
+          ref="wcw"
           :fs="fs"
           :theme="_theme"
           :height="height"

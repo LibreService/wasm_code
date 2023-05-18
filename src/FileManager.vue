@@ -401,6 +401,16 @@ function onKeyup (e: KeyboardEvent) {
 
 onMounted(() => document.addEventListener('keyup', onKeyup))
 onUnmounted(() => document.removeEventListener('keyup', onKeyup))
+
+function expandFolder (path: string) {
+  if (!expandedKeys.value.includes(path)) {
+    expandedKeys.value.push(path)
+  }
+}
+
+defineExpose({
+  expandFolder
+})
 </script>
 
 <template>

@@ -12,6 +12,8 @@ defineProps<{
   extLangMap: {[key: string]: string}
 }>()
 
+const wcc = ref<InstanceType<typeof WasmCodeCore>>()
+
 const dialog = useDialog()
 const message = useMessage()
 
@@ -131,10 +133,17 @@ const onDeleteFolder = onDeleteFileOrFolder('folder')
 function onErrorDownload (path: string) {
   message.error(`Cannot download ${path}`)
 }
+
+defineExpose({
+  expandFolder (path: string) {
+    return wcc.value!.expandFolder(path)
+  }
+})
 </script>
 
 <template>
   <wasm-code-core
+    ref="wcc"
     :fs="fs"
     :theme="theme"
     :height="height"

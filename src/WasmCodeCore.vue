@@ -60,6 +60,7 @@ const {
   theme
 } = toRefs(props)
 
+const fm = ref<InstanceType<typeof FileManager>>()
 const ce = ref<InstanceType<typeof CodeEditor>>()
 
 async function onOpenFile (path: string) {
@@ -76,6 +77,12 @@ async function onOpenFile (path: string) {
 
 const osTheme = useOsTheme()
 const _theme = computed(() => theme.value || osTheme.value)
+
+defineExpose({
+  expandFolder (path: string) {
+    return fm.value!.expandFolder(path)
+  }
+})
 </script>
 
 <template>
@@ -87,6 +94,7 @@ const _theme = computed(() => theme.value || osTheme.value)
       <div style="display: flex">
         <div style="width: 20%; margin-top: 17px">
           <file-manager
+            ref="fm"
             :fs="fs"
             :height="height"
             :on-open-file="onOpenFile"
