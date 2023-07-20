@@ -246,7 +246,7 @@ async function downloadFolder (path: string) {
 
   await traverse(undefined, addFileToZip, addFolderToZip)(path)
   const blob = await downloadZip(manifest).blob()
-  downloadBlob(blob, name)
+  downloadBlob(blob, name + '.zip')
 }
 
 function upload (path: string) {
