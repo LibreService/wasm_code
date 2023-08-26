@@ -12,3 +12,32 @@ export type ASYNC_FS = {
   mkdir: (path: string) => Promise<void>
   rmdir: (path: string) => Promise<void>
 }
+
+async function lsDir (fs: ASYNC_FS, path: string) {
+  const names = await fs.readdir(path)
+  return names.filter(name => name !== '.' && name !== '..')
+}
+
+function traverseFS (fs: ASYNC_FS, preFolderCallback: HandlerZeroAction | undefined, fileCallback: HandlerZeroAction, postFolderCallback: HandlerZeroAction | undefined) {
+  async function clo (path: string) {
+    const { mode } = await fs.lstat(path)
+    if (await fs.isDir(mode)) {
+      if (!path.endsWith('/')) {
+        path += '/'
+      }
+      preFolderCallback && await preFolderCallback(path)
+      const names = await lsDir(fs, path)
+      for (const name of names) {
+        await clo(path + name)
+      }
+      return postFolderCallback && postFolderCallback(path)
+    }
+    return fileCallback(path)
+  }
+  return clo
+}
+
+export {
+  lsDir,
+  traverseFS
+}

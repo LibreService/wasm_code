@@ -3,6 +3,10 @@ import { computed, ref, toRefs, toRaw, onMounted, onUnmounted } from 'vue'
 import { NButtonGroup, NButton, NIcon, NTree, TreeOption, NScrollbar, NDropdown, TreeDropInfo } from 'naive-ui'
 import { InsertDriveFileRound, CreateNewFolderRound, RefreshRound } from '@vicons/material'
 import { downloadZip } from 'client-zip'
+import {
+  lsDir,
+  traverseFS
+} from './async-fs'
 
 const props = defineProps<{
   fs: ASYNC_FS
@@ -159,31 +163,7 @@ function nodeProps ({ option }: { option: TreeOption }) {
   }
 }
 
-async function lsDir (path: string) {
-  const names = await fs.readdir(path)
-  return names.filter(name => name !== '.' && name !== '..')
-}
-
-function traverse (preFolderCallback: HandlerZeroAction | undefined, fileCallback: HandlerZeroAction, postFolderCallback: HandlerZeroAction | undefined) {
-  async function clo (path: string) {
-    const { mode } = await fs.lstat(path)
-    if (await fs.isDir(mode)) {
-      if (!path.endsWith('/')) {
-        path += '/'
-      }
-      preFolderCallback && await preFolderCallback(path)
-      const names = await lsDir(path)
-      for (const name of names) {
-        await clo(path + name)
-      }
-      return postFolderCallback && postFolderCallback(path)
-    }
-    return fileCallback(path)
-  }
-  return clo
-}
-
-const rmr = traverse(undefined, fs.unlink, fs.rmdir)
+const rmr = traverseFS(fs, undefined, fs.unlink, fs.rmdir)
 
 function getName (path: string) {
   if (path.endsWith('/')) {
@@ -207,7 +187,7 @@ function cpr (srcPath: string, dstPath: string) {
     return dstPath + name + '/' + path.slice(srcPath.length)
   }
 
-  return traverse(path => fs.mkdir(getPath(path)), async path => fs.writeFile(getPath(path), await fs.readFile(path)), undefined)(srcPath)
+  return traverseFS(fs, path => fs.mkdir(getPath(path)), async path => fs.writeFile(getPath(path), await fs.readFile(path)), undefined)(srcPath)
 }
 
 function downloadBlob (blob: Blob, name: string) {
@@ -244,7 +224,7 @@ async function downloadFolder (path: string) {
     manifest.push({ name: strip(subpath) })
   }
 
-  await traverse(undefined, addFileToZip, addFolderToZip)(path)
+  await traverseFS(fs, undefined, addFileToZip, addFolderToZip)(path)
   const blob = await downloadZip(manifest).blob()
   downloadBlob(blob, name + '.zip')
 }
@@ -329,7 +309,7 @@ function handleSelect (key: string) {
 async function handleLoad (node: TreeOption) {
   const path = node.key as string
   const children: TreeOption[] = []
-  const names = await lsDir(path)
+  const names = await lsDir(fs, path)
   for (const name of names) {
     const subPath = path + name
     const option: TreeOption = {
