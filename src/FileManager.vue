@@ -11,6 +11,7 @@ import {
 const props = defineProps<{
   fs: ASYNC_FS
   height: string
+  hidePath?: HidePath
   onOpenFile: HandlerZeroAction
   onNewFile: HandlerOneAction
   onNewFolder: HandlerOneAction
@@ -24,6 +25,7 @@ const props = defineProps<{
 
 const {
   fs,
+  hidePath,
   onOpenFile,
   onNewFile,
   onNewFolder,
@@ -312,6 +314,9 @@ async function handleLoad (node: TreeOption) {
   const names = await lsDir(fs, path)
   for (const name of names) {
     const subPath = path + name
+    if (hidePath && hidePath(subPath)) {
+      continue
+    }
     const option: TreeOption = {
       label: name
     }

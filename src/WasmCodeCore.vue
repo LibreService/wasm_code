@@ -11,6 +11,7 @@ interface Props {
   fs: ASYNC_FS
   langParserMap?: {[key: string]: StreamParser<any>}
   extLangMap?: {[key: string]: string}
+  hidePath?: HidePath
   onCloseUnsaved: HandlerTwoActions
   onErrorOpenFile?: HandlerZeroAction
   onErrorNonText?: HandlerZeroAction
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
   theme: undefined,
   langParserMap: () => ({}),
   extLangMap: () => ({}),
+  hidePath: undefined,
   onErrorOpenFile: undefined,
   onErrorNonText: undefined,
   onErrorSaveFile: undefined,
@@ -42,6 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const {
   fs,
+  hidePath,
   onCloseUnsaved,
   onErrorOpenFile,
   onErrorNonText,
@@ -97,6 +100,7 @@ defineExpose({
             ref="fm"
             :fs="fs"
             :height="height"
+            :hide-path="hidePath"
             :on-open-file="onOpenFile"
             :on-new-file="onNewFile"
             :on-new-folder="onNewFolder"

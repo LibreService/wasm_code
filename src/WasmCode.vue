@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, ref, toRefs } from 'vue'
+import { computed, ref, toRefs, toRaw } from 'vue'
 import { NDialogProvider, NMessageProvider, NConfigProvider, useOsTheme, darkTheme } from 'naive-ui'
 import { StreamParser } from '@codemirror/language'
 import WasmCodeWrapper from './WasmCodeWrapper.vue'
@@ -10,17 +10,20 @@ interface Props {
   theme?: 'light' | 'dark' | undefined
   langParserMap?: {[key: string]: StreamParser<any>}
   extLangMap?: {[key: string]: string}
+  hidePath?: HidePath
 }
 </script>
 
 <script setup lang="ts">
 const props = withDefaults(defineProps<Props>(), {
   theme: undefined,
+  hidePath: undefined,
   langParserMap: () => ({}),
   extLangMap: () => ({})
 })
 
 const { theme } = toRefs(props)
+const { hidePath } = toRaw(props)
 
 const osTheme = useOsTheme()
 const _theme = computed(() => theme.value || osTheme.value!)
@@ -47,6 +50,7 @@ defineExpose({
           :height="height"
           :lang-parser-map="langParserMap"
           :ext-lang-map="extLangMap"
+          :hide-path="hidePath"
         />
       </n-message-provider>
     </n-dialog-provider>

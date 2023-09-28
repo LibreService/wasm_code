@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { ref, h } from 'vue'
+import { ref, h, toRaw } from 'vue'
 import { NInput, NUpload, NUploadDragger, UploadFileInfo, useDialog, useMessage } from 'naive-ui'
 import { StreamParser } from '@codemirror/language'
 import WasmCodeCore from './WasmCodeCore.vue'
 
-defineProps<{
+const props = defineProps<{
   fs: ASYNC_FS
   height: string
   theme: 'light' | 'dark'
   langParserMap: {[key: string]: StreamParser<any>}
   extLangMap: {[key: string]: string}
+  hidePath?: HidePath
 }>()
+
+const { hidePath } = toRaw(props)
 
 const wcc = ref<InstanceType<typeof WasmCodeCore>>()
 
@@ -149,6 +152,7 @@ defineExpose({
     :height="height"
     :lang-parser-map="langParserMap"
     :ext-lang-map="extLangMap"
+    :hide-path="hidePath"
     :on-close-unsaved="onCloseUnsaved"
     :on-error-open-file="onErrorOpenFile"
     :on-error-non-text="onErrorNonText"
