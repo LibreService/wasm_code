@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, ref, toRaw, toRefs } from 'vue'
-import { NConfigProvider, darkTheme, useOsTheme, NLayout } from 'naive-ui'
+import { NConfigProvider, darkTheme, useOsTheme, NLayout, NSplit } from 'naive-ui'
 import { StreamParser } from '@codemirror/language'
 import FileManager from './FileManager.vue'
 import CodeEditor from './CodeEditor.vue'
@@ -94,36 +94,43 @@ defineExpose({
   >
     <n-layout>
       <!-- Provide background color for theme -->
-      <div style="display: flex">
-        <div style="width: 20%; margin-top: 17px">
-          <file-manager
-            ref="fm"
+      <n-split
+        direction="horizontal"
+        :default-size="0.2"
+      >
+        <template #1>
+          <div style="margin-top: 17px">
+            <file-manager
+              ref="fm"
+              :fs="fs"
+              :height="height"
+              :hide-path="hidePath"
+              :on-open-file="onOpenFile"
+              :on-new-file="onNewFile"
+              :on-new-folder="onNewFolder"
+              :on-error-paste="onErrorPaste"
+              :on-upload="onUpload"
+              :on-rename="onRename"
+              :on-delete-file="onDeleteFile"
+              :on-delete-folder="onDeleteFolder"
+              :on-error-download="onErrorDownload"
+            />
+          </div>
+        </template>
+        <template #2>
+          <code-editor
+            ref="ce"
+            style="width: 80%"
             :fs="fs"
             :height="height"
-            :hide-path="hidePath"
-            :on-open-file="onOpenFile"
-            :on-new-file="onNewFile"
-            :on-new-folder="onNewFolder"
-            :on-error-paste="onErrorPaste"
-            :on-upload="onUpload"
-            :on-rename="onRename"
-            :on-delete-file="onDeleteFile"
-            :on-delete-folder="onDeleteFolder"
-            :on-error-download="onErrorDownload"
+            :theme="_theme!"
+            :lang-parser-map="langParserMap"
+            :ext-lang-map="extLangMap"
+            :on-close-unsaved="onCloseUnsaved"
+            :on-error-save-file="onErrorSaveFile"
           />
-        </div>
-        <code-editor
-          ref="ce"
-          style="width: 80%"
-          :fs="fs"
-          :height="height"
-          :theme="_theme!"
-          :lang-parser-map="langParserMap"
-          :ext-lang-map="extLangMap"
-          :on-close-unsaved="onCloseUnsaved"
-          :on-error-save-file="onErrorSaveFile"
-        />
-      </div>
+        </template>
+      </n-split>
     </n-layout>
   </n-config-provider>
 </template>
